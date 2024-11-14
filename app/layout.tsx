@@ -22,7 +22,6 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} font-poppins antialiased`}
       >
-        Yessirski
         {children}
       </body>
     </html>
