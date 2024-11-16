@@ -13,7 +13,7 @@ const Layout = ({children}: {children: React.ReactNode}) => {
                 className='h-auto'/>
                 <div className='space-y-5 text-white'>
                     <h1 className='h1' >
-                        Organise your files efficiently
+                        Organise your files efficiently.
                     </h1>
                     <p className='body-1'>
                         Store and manage all your files in one place.
