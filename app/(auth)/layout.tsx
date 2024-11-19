@@ -6,10 +6,10 @@ const Layout = ({children}: {children: React.ReactNode}) => {
     <div className='flex min-h-screen' >
         <section className='bg-brand p-10'>
             <div>
-                <Image src="/favicon.ico"
+                <Image src="/logo.svg"
                 alt="logo"
-                width={16}
-                height={16}
+                width={224}
+                height={82}
                 className='h-auto'/>
                 <div className='space-y-5 text-white'>
                     <h1 className='h1' >
