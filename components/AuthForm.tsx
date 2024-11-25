@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input"
 
 import React, { useState } from 'react'
 import Link from "next/link"
+import { createAccount } from "@/lib/actions/users.actions"
+import OTPModal from "./OTPModal"
 
 type FormType = "sign-in" | "sign-up";
 
@@ -31,6 +33,7 @@ const AuthForm = ( { type }: { type: FormType }) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, seterrorMessage] = useState("");
+    const [accountId, setAccountId] = useState(null);
     
     const formSchema = authFormSchema(type);
 
@@ -43,7 +46,26 @@ const AuthForm = ( { type }: { type: FormType }) => {
   })
  
   const onSubmit = async(values: z.infer<typeof formSchema>) => {
-    console.log(values)
+    setIsLoading(true);
+    seterrorMessage("");
+
+    try {
+      const user = await createAccount({
+          fullName: values.fullName ||  "",
+          email: values.email
+      });
+
+      if (!user || !user.accountId) {
+        throw new Error("Invalid user object returned from createAccount");
+      }    
+
+      setAccountId(user.accountId);      
+    } catch (error) {
+      // seterrorMessage("Failed to create an account. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+
   }
 
   return (
@@ -113,8 +135,7 @@ const AuthForm = ( { type }: { type: FormType }) => {
     </form>
     </Form>
 
-
-    {/* OTP verification */}
+    {accountId && (<OTPModal email={form.getValues("email")} accountId={accountId} />)}
     </>
   )
 }
