@@ -4,6 +4,7 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "@/lib/appwrite";
 import { appWriteConfig } from "@/lib/appwrite/config";
 import { parseStringify } from "@/lib/utils";
+import { cookies } from "next/headers";
 
 // Function to get a user by email
 const getUserByEmail = async (email: string) => {
@@ -11,7 +12,7 @@ const getUserByEmail = async (email: string) => {
 
   const result = await databases.listDocuments(
     appWriteConfig.databaseId,
-    appWriteConfig.userCollectionId,
+    appWriteConfig.usersCollectionId,
     [Query.equal("email", [email])],
   );
 
@@ -25,7 +26,7 @@ const handleError = (error: unknown, message: string) => {
 };
 
 // Function to send an email OTP
-const sendEmailOTP = async ({ email }: { email: string }) => {
+export const sendEmailOTP = async ({ email }: { email: string }) => {
   const { account } = await createAdminClient(); // Use `createAdminClient` for admin-level operations
 
   try {
@@ -58,7 +59,7 @@ export const createAccount = async ({
 
       await databases.createDocument(
         appWriteConfig.databaseId,
-        appWriteConfig.userCollectionId,
+        appWriteConfig.usersCollectionId,
         ID.unique(),
         {
           fullName,
@@ -75,3 +76,21 @@ export const createAccount = async ({
     handleError(error, "Failed to create account");
   }
 };
+
+export const verifySecret = async({accountId,password}: {accountId:string,password:string})=>{
+  try {
+    const {account} = await createAdminClient();
+
+    const session = await account.createSession(accountId,password);
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: true,
+    });
+    
+    return parseStringify({sessionId: session.$id});
+  } catch (error) {
+    handleError(error, "Failed to verify OTP");
+  }
+}
