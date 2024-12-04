@@ -1,10 +1,11 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
-import { createAdminClient } from "@/lib/appwrite";
+import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { appWriteConfig } from "@/lib/appwrite/config";
 import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
+import { avatarPlaceholderUrl } from "@/constants";
 
 // Function to get a user by email
 const getUserByEmail = async (email: string) => {
@@ -64,8 +65,7 @@ export const createAccount = async ({
         {
           fullName,
           email,
-          avatar:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdIVSqaMsmZyDbr9mDPk06Nss404fosHjLg&s",
+          avatar: avatarPlaceholderUrl,
           accountId,
         },
       );
@@ -93,4 +93,20 @@ export const verifySecret = async({accountId,password}: {accountId:string,passwo
   } catch (error) {
     handleError(error, "Failed to verify OTP");
   }
+}
+
+export const getCurrentUser = async () => {
+  const {databases, account} = await createSessionClient();
+
+  const result = await account.get();
+
+  const user = await databases.listDocuments(
+    appWriteConfig.databaseId,
+    appWriteConfig.usersCollectionId,
+    [Query.equal("accountId", result.$id)],
+  );
+
+  if (user.total <= 0) return null;
+
+  return parseStringify(user.documents[0]);
 }
