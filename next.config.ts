@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
         hostname: "encrypted-tbn0.gstatic.com",
       },{
         protocol: "https",
+        hostname: "img.freepik.com",
+      },{
+        protocol: "https",
         hostname: "cloud.appwrite.io",
       }
     ]

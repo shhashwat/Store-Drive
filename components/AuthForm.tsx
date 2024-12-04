@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { signInUser } from "@/lib/actions/users.actions"
 
 
 import React, { useState } from 'react'
@@ -50,10 +51,11 @@ const AuthForm = ( { type }: { type: FormType }) => {
     setErrorMessage("");
 
     try {
-      const user = await createAccount({
+      const user = 
+      type === "sign-up" ? await createAccount({
           fullName: values.fullName ||  "",
           email: values.email
-      });
+      }): await signInUser({email: values.email});
 
       if (!user || !user.accountId) {
         throw new Error("Invalid user object returned from createAccount");

@@ -6,6 +6,8 @@ import { appWriteConfig } from "@/lib/appwrite/config";
 import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { avatarPlaceholderUrl } from "@/constants";
+import { redirect } from "next/navigation";
+import { error } from "console";
 
 // Function to get a user by email
 const getUserByEmail = async (email: string) => {
@@ -109,4 +111,31 @@ export const getCurrentUser = async () => {
   if (user.total <= 0) return null;
 
   return parseStringify(user.documents[0]);
+}
+
+export const signOutUser = async () => {
+  const {account} = await createSessionClient();
+  try {
+    await account.deleteSession('current');
+    (await cookies()).delete('appwrite-session');
+  } catch (error) {
+    handleError(error, "Failed to Logout user");
+  } finally{
+    redirect('/sign-in');
+  }
+}
+
+export const signInUser = async ({email}: {email:string}) => {
+  try {
+    const existingUser = await getUserByEmail(email);
+
+    if(existingUser){
+      await sendEmailOTP({ email });
+      return parseStringify({accountId: existingUser.accountId});
+    }
+
+    return parseStringify({accountId: null, error: "User not found"});
+  } catch (error) {
+    handleError(error, "Failed to sign in user");
+  }
 }
