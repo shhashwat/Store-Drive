@@ -8,8 +8,8 @@ const poppins = Poppins({
   variable: "--font-poppins",})
 
 export const metadata: Metadata = {
-  title: "Store Drive",
-  description: "Store Drive - preserve memories, preserve a story",
+  title: "StoreDrive",
+  description: "StoreDrive - preserve memories, preserve a story",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body
         className={`${poppins.variable} font-poppins antialiased`}
       >
