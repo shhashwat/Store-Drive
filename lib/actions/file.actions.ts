@@ -84,4 +84,14 @@ export const getFiles = async ()=>{
     } catch (error) {
         handleError(error, "Failed to get files");
     }
+};
+
+const renameFile = async ({fileId, name, extension, path}: RenameFileProps)=>{
+    const {databases} = await createAdminClient();
+
+    try {
+        
+    } catch (error) {
+        handleError(error, "Failed to rename file");
+    }
 }
