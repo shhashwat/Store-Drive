@@ -24,6 +24,9 @@ import Link from 'next/link';
 import { constructDownloadUrl } from '@/lib/utils';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
+import { renameFile } from '@/lib/actions/file.actions';
+import { usePathname } from 'next/navigation';
+import { FileDetails, ShareInput } from './ActionsModalContent';
   
 
 const ActionsDropdown = ({file}: {file: Models.Document}) => {
@@ -32,6 +35,9 @@ const ActionsDropdown = ({file}: {file: Models.Document}) => {
     const [action, setAction] = useState<ActionType | null>(null);
     const [name, setName] = useState(file.name);
     const [isLoading, setiIsLoading] = useState(false);
+    const [emails, setEmails] = useState<string[]>([]);
+
+    const path = usePathname();
 
     const closeAllModals = ()=>{
         setIsModalOpen(false);
@@ -42,8 +48,24 @@ const ActionsDropdown = ({file}: {file: Models.Document}) => {
     }
 
     const handleAction = async ()=>{
+        if(!action) return;
+        setiIsLoading(true);
+        let success = false;
 
+        const actions = {
+            rename: () => renameFile({fileId: file.$id, name, extension: file.extension, path: path}),
+            share: () => console.log("share"),
+            delete: () => console.log("delete"),
+        };
+
+        success = await actions[action.value as keyof typeof actions]();
+
+        if(success) closeAllModals();
+
+        setiIsLoading(false);
     };
+
+    const handleRemoveUsers = ()=>{};
 
     const renderDialogContent = () => {
 
@@ -63,6 +85,11 @@ const ActionsDropdown = ({file}: {file: Models.Document}) => {
                     onChange={(e)=> setName(e.target.value)}
                     />
                 )}
+                {value === 'details' && <FileDetails file={file} />}
+                {value === 'share' && (
+                    <ShareInput file={file} onInputChange={setEmails} onRemove={handleRemoveUsers} />
+                )}
+
                 </DialogHeader>
                 {['rename', 'share', 'delete'].includes(value) && (
                     <DialogFooter className='flex flex-col gap-3 md:flex-row' >
