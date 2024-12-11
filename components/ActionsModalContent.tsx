@@ -63,12 +63,19 @@ export const ShareInput = ({file, onInputChange, onRemove}: Props) => {
                 <p className='subtitle-2 text-light-200'>{file.users.length} users</p>
             </div>
             <ul className='pt-2'>
-                {file.users.map((email: string)=>{
-                    <li key={email} className='flex items-center justify-between gap-2' >
-                        <p className='subtitle-2' >{email}</p>
-                        <Button onClick={() => onRemove(email)} >
+                {file.users.map((email: string)=>(
+                    <li key={email}
+                    className='flex items-center justify-between gap-2' >
+                        <p className='subtitle-2'>
+                        {email}
+                        </p>
+
+                        <Button
+                        onClick={() => onRemove(email)}
+                        className='share-remove-user'
+                        >
                             <Image
-                            src={"/assets/icons/remove.svg"}
+                            src="/assets/icons/remove.svg"
                             alt='Remove'
                             width={24}
                             height={24}
@@ -76,7 +83,7 @@ export const ShareInput = ({file, onInputChange, onRemove}: Props) => {
                             />
                         </Button>
                     </li>
-                })}
+                ))}
             </ul>
         </div>
     </div>

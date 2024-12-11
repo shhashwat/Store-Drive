@@ -65,7 +65,7 @@ const createQueries = (currentUser: Models.Document)=>{
     return queries;
 };
 
-export const getFiles = async ()=>{
+export const getFiles = async ({types = []}: GetFilesProps)=>{
     const {databases} = await createAdminClient();
     try {
         const currentUser = await getCurrentUser();
@@ -102,5 +102,47 @@ export const renameFile = async ({fileId, name, extension, path}: RenameFileProp
         return parseStringify(updatedFile);
     } catch (error) {
         handleError(error, "Failed to rename file");
+    }
+}
+
+export const updateFileUsers = async ({fileId, emails, path}: UpdateFileUsersProps)=>{
+    const {databases} = await createAdminClient();
+
+    try {
+        const updatedFile = await databases.updateDocument(
+            appWriteConfig.databaseId,
+            appWriteConfig.filesCollectionId,
+            fileId,
+            {users: emails}
+        );
+
+        revalidatePath(path);
+        return parseStringify(updatedFile);
+    } catch (error) {
+        handleError(error, "Failed to update users");
+    }
+}
+
+export const deleteFile = async ({fileId, bucketFileId, path}: DeleteFileProps)=>{
+    const {databases,storage} = await createAdminClient();
+
+    try {
+        const deletedFile = await databases.deleteDocument(
+            appWriteConfig.databaseId,
+            appWriteConfig.filesCollectionId,
+            fileId,
+        );
+
+        if(deletedFile){
+            await storage.deleteFile(
+                appWriteConfig.bucketId,
+                bucketFileId
+            )
+        }
+
+        revalidatePath(path);
+        return parseStringify({staus: "success"});
+    } catch (error) {
+        handleError(error, "Failed to update users");
     }
 }
