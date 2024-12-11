@@ -53,13 +53,15 @@ export const uploadFile = async ({file, ownerId, accountId, path}: UploadFilePro
     }
 }
 
-const createQueries = (currentUser: Models.Document)=>{
+const createQueries = (currentUser: Models.Document, types: string[])=>{
     const queries = [
         Query.or([
             Query.equal("owner", currentUser.$id),
             Query.contains("users", currentUser.email),
         ])
     ];
+
+    if(types.length > 0) queries.push(Query.equal("type", types));
 
     //TODO: Search, Sort, Limits...
     return queries;
@@ -72,7 +74,7 @@ export const getFiles = async ({types = []}: GetFilesProps)=>{
 
         if(!currentUser) throw new Error('No user found');
 
-        const queries = createQueries(currentUser);
+        const queries = createQueries(currentUser, types);
         
         const files = await databases.listDocuments(
             appWriteConfig.databaseId,
