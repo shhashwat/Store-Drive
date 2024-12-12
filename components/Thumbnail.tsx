@@ -10,7 +10,7 @@ interface Props {
     className?: string;
 }
 
-const Thumbnail = ({ type, extension, url = '', imageClassName, className}: Props) => {
+export const Thumbnail = ({ type, extension, url = '', imageClassName, className}: Props) => {
 
     const isImage = type === 'image' && extension !== 'svg';
 

@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import FileUploader from './FileUploader';
 import { signOutUser } from '@/lib/actions/users.actions';
+import Search from './Search';
 
 interface Props {
   $id: string;
@@ -31,6 +32,7 @@ const MobileNavigation = ({ $id: ownderId, accountId,fullName, avatar, email}: P
   const pathname = usePathname();
 
   return <header className='mobile-header' >
+    <Search/>
     <Image src={"/assets/icons/logo-full-brand.svg"} alt="logo" width={120} height={52} className='h-auto'/>
 
     <Sheet open={open} onOpenChange={setOpen} >
